@@ -32,3 +32,41 @@ class Usuario:
                 usuario["email"],usuario["created_at"],usuario["updated_at"]))
 
         return listaUsuarios
+    
+    @classmethod
+    def obtenerUsuario(cls,usuario:dict):
+        query=  '''
+                    SELECT *
+                    FROM usuarios
+                    WHERE id= %(id)s;
+                '''
+        resultado = connectToMySQL("esquema_usuario").query_db(query,usuario)
+        print(resultado)
+        if(resultado!= False):
+            usuario = Usuario(resultado[0]["id"], resultado[0]["nombre"], 
+                            resultado[0]["apellido"], resultado[0]["email"], 
+                            resultado[0]["created_at"], resultado[0]["updated_at"])
+            return usuario
+        return resultado
+
+    @classmethod
+    def actualizaUsuario(cls,usuario:dict):
+        query = '''
+                    UPDATE usuarios
+                    SET nombre=%(nombre)s, apellido=%(apellido)s,
+                    email=%(email)s, updated_at=NOW()
+                    WHERE id = %(id)s
+                '''
+        resultado = connectToMySQL("esquema_usuario").query_db(query,usuario)
+        return resultado
+
+    @classmethod
+    def borraUsuario(cls, usuario:dict):
+        query = '''
+                    DELETE
+                    FROM usuarios 
+                    WHERE id = %(id)s
+                '''
+        resultado = connectToMySQL("esquema_usuario").query_db(query,usuario)
+        print(resultado)
+        return resultado
